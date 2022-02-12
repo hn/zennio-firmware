@@ -19,9 +19,19 @@ for the Z41 Pro firmware version 3.6.0. Older versions can be [downloaded](https
 
 The firmware ZIP file contains the firmware as a single binary `*.pak`-file, e.g. `Z41_Pro_update.pak`.
 
+The device uses U-Boot as bootloader, Linux 2.6.31 as Kernel and a GNU/Linux
+OS based on [NXP/Freescale Semiconductor Embedded Linux Environment](https://www.nxp.com/design/software/embedded-software/i-mx-software/embedded-linux-for-i-mx-applications-processors:IMXLINUX)
+and [NXP i.MX25 Product Development Kit](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/i-mx25-product-development-kit:IMX25PDK).
+
+`System` and `User` data is stored in [JFFS2](https://en.wikipedia.org/wiki/JFFS2) partitions,
+which can be extracted with [jefferson](https://github.com/sviehb/jefferson), for example.
+
+The main application (GUI, KNX i/o, network) is stored as a ELF executable
+on the `User` partition, e.g. `Z41_Pro_3_6_0_arm_release`.
+
 ### Unpack firmware
 
-The firmware file `*.pak` contains a table of contents and several sections of data.
+The firmware `*.pak`-file contains a table of contents and several sections of data.
 With [unpack-zennio-firmware.pl](unpack-zennio-firmware.pl) one can unpack the file:
 
 ```
@@ -83,6 +93,21 @@ Data (!Keys, !Sigs) sections: 4
  5       User          Z41_Pro_3.6.0   30038164   38195060    8156896 Z41_Pro_3.6.0-section-5-030038164-008156896-User-Z41_Pro_3.6.0.bin
 
 ```
+
+## Crypto / Obfuscation
+
+Some firmware `*.pak`-files (e.g. `Z41_Lite_update.pak` for the Z41 Lite)
+contain 4 sections of data. These sections contain raw data and can be
+analyzed/unpacked with with appropriate tools.
+
+Some (newer?) firmware `*.pak`-files (Z41 Pro, ...) contain 6 sections of
+data: a `Keys` section, a `Sigs` section and the 4 sections as in the standard case,
+except that these sections are encrypted/obfuscated and cannot be readily examined.
+
+First guess is that the `Keys` and `Sigs` sections contain 4 times 256 byte
+keys and checksums to decode and check the following sections.
+Some simple tests have shown that it is probably not XOR obfuscation
+as one might initially expect. This needs further analysis.
 
 ## Misc
 

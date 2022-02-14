@@ -26,7 +26,7 @@ and [NXP i.MX25 Product Development Kit](https://www.nxp.com/design/development-
 `System` and `User` data is stored in [JFFS2](https://en.wikipedia.org/wiki/JFFS2) partitions,
 which can be extracted with [jefferson](https://github.com/sviehb/jefferson), for example.
 
-The main application (GUI, KNX i/o, network) is stored as a ELF executable
+The main application (GUI, KNX i/o, network) is stored as a monolithic ELF executable
 on the `User` partition, e.g. `Z41_Pro_3_6_0_arm_release`.
 
 ### Unpack firmware
@@ -107,7 +107,10 @@ except that these sections are encrypted/obfuscated and cannot be readily examin
 First guess is that the `Keys` and `Sigs` sections contain 4 times 256 byte
 keys and checksums to decode and check the following sections.
 Some simple tests have shown that it is probably not XOR obfuscation
-as one might initially expect. This needs further analysis.
+as one might initially expect. From the file `/usr/local/etc/update.cfg` one
+could possibly deduce that public key cryptography is in use
+(`ZenPublic.pem`, `Z41Public.pem`, `Z41SecretKey`, ...).
+This needs further analysis.
 
 ## Misc
 
